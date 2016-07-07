@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-void mergeSort(int *arr, int start, int end);
-void merge(int *arr, int start, int mid, int end);
+void quickSort(int numbers[], int left, int right);
+
 
 int main(void) {
 	/* 아래 freopen 함수는 input.txt를 read only 형식으로 열고, 표준입력(키보드) 대신 input.txt 로 부터 읽어오겠다는 의미의 코드입니다.
@@ -32,7 +32,7 @@ int main(void) {
 
 		}
 
-		mergeSort(arr, 0,9);
+		quickSort(arr, 0,9);
 
 
 		// 이 부분에서 정답을 출력하십시오.
@@ -48,57 +48,47 @@ int main(void) {
 	return 0;	// 정상종료 시 반드시 0을 리턴해야 합니다.
 }
 
-void mergeSort(int *arr, int start, int end) {
-	int mid;
 
-	if (start < end) {
-		mid = (start + end) / 2;
-		mergeSort(arr, start, mid);
-		mergeSort(arr, mid + 1, end);
-		merge(arr, start, mid, end);
-	}
-}
+void quickSort(int numbers[], int left, int right)
+{
+	int pivot, l_hold, r_hold;
+	l_hold = left;
+	r_hold = right;
+	pivot = numbers[left];  // 0번째 원소를 피봇으로 선택
+	while (left < right)
+	{
+		// 값이 선택한 피봇과 같거나 크다면, 이동할 필요가 없다
+		while ((numbers[right] >= pivot) && (left < right))
+			right--;
 
-void merge(int *arr, int start, int mid, int end) {
-	int temp[10];
-	int i, j, k, m;
-
-	i = start;
-	j = mid + 1;
-	k = start;
-
-	while (i <= mid&&j <= end) {
-		
-		if (arr[i] < arr[j]) {
-			temp[k] = arr[i];
-			i++; k++;
+		// 그렇지 않고 값이 피봇보다 작다면,
+		// 피봇의 위치에 현재 값을 넣는다.
+		if (left != right)
+		{
+			numbers[left] = numbers[right];
 		}
-		else {
-			temp[k] = arr[j];
-			j++; k++;
+		// 왼쪽부터 현재 위치까지 값을 읽어들이면서
+		// 피봇보다 큰 값이 있다면, 값을 이동한다.
+		while ((numbers[left] <= pivot) && (left < right))
+			left++;
 
+		if (left != right)
+		{
+			numbers[right] = numbers[left];
+			right--;
 		}
 	}
 
-	if (i > mid) {
-		for (m = j; m <= end; m++) {
-			temp[k] = arr[m];
-			k++;
+	// 모든 스캔이 끝났다면, 피봇값을 현재 위치에 입력한다.
+	// 이제 피봇을 기준으로 왼쪽에는 피봇보다 작거나 같은 값만 남았다.
+	numbers[left] = pivot;
+	pivot = left;
+	left = l_hold;
+	right = r_hold;
 
-		}
-
-	}
-	else {
-		for (m = i; m <= mid; m++) {
-			temp[k] = arr[m];
-			k++;
-
-		}
-
-
-	}
-	for (m = start; m <= end; m++) {
-		arr[m] = temp[m];
-	}
-
+	// 재귀호출을 수행한다.
+	if (left < pivot)
+		quickSort(numbers, left, pivot - 1);
+	if (right > pivot)
+		quickSort(numbers, pivot + 1, right);
 }
